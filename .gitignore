@@ -1,0 +1,22 @@
+# === PyCharm ===
+.idea/
+*.iml
+
+# === Python ===
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# === Виртуальное окружение ===
+venv/
+env/
+.venv/
+
+# === ОС ===
+.DS_Store
+Thumbs.db
+
+# === Локальные файлы ===
+*.log
+*.tmp
