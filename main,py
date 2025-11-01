@@ -1,0 +1,50 @@
+from fastapi import FastAPI
+
+app = FastAPI(
+    title="API от су-шефа",
+    description="Бэкенд для ресторана. Готовлю код, как стейк — с душой.",
+    version="1.0"
+)
+
+# === МЕНЮ ===
+@app.get("/", summary="Главная", tags=["Меню"])
+def home():
+    return {"сообщение": "Добро пожаловать в API кафе!", "статус": "готов к заказам"}
+
+@app.get("/меню", summary="Список блюд", tags=["Меню"])
+def menu():
+    return {
+        "блюда": [
+            {"id": 1, "название": "Стейк рибай", "цена": 5500, "вес": "300г"},
+            {"id": 2, "название": "Паста карбонара", "цена": 3200},
+            {"id": 3, "название": "Суп том-ям", "цена": 2800}
+        ]
+    }
+
+@app.get("/блюдо/{id}", summary="Блюдо по ID", tags=["Меню"])
+def get_dish(id: int):
+    menu_db = {1: "Стейк рибай", 2: "Паста карбонара", 3: "Суп том-ям"}
+    dish = menu_db.get(id)
+    if dish:
+        return {"блюдо": dish, "id": id}
+    return {"ошибка": "Блюдо не найдено"}
+
+from pydantic import BaseModel
+from typing import List
+
+# === ЗАКАЗЫ ===
+class Заказ(BaseModel):
+    блюдо_id: int
+    количество: int = 1
+    комментарий: str = ""
+
+заказы: List[Заказ] = []
+
+@app.post("/заказ", summary="Создать заказ", tags=["Заказы"])
+def создать_заказ(заказ: Заказ):
+    заказы.append(заказ)
+    return {"статус": "Заказ принят!", "заказ": заказ.dict()}
+
+@app.get("/заказы", summary="Все заказы", tags=["Заказы"])
+def все_заказы():
+    return {"заказы": [z.dict() for z in заказы]}
